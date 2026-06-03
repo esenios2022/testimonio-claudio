@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonio - Claudio Martinez</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Segoe UI';background:linear-gradient(135deg,#f5f7fa,#c3cfe2);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .container{max-width:700px;width:100%;background:rgba(255,255,255,0.95);border-radius:20px;padding:50px;box-shadow:0 8px 32px rgba(0,0,0,0.1)}
+    .header{text-align:center;margin-bottom:40px}
+    h1{background:linear-gradient(135deg,#f4a460,#daa520);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:32px;margin-bottom:10px}
+    input,textarea{width:100%;padding:14px;border:2px solid #e0e0e0;border-radius:10px;margin:15px 0;font-family:inherit}
+    input:focus,textarea:focus{outline:none;border-color:#daa520}
+    button{width:100%;padding:16px;background:linear-gradient(135deg,#f4a460,#daa520);color:white;border:none;border-radius:10px;font-weight:700;cursor:pointer;margin-top:20px}
+    .success{display:none;background:#d4edda;color:#155724;padding:16px;border-radius:10px;margin:10px 0}
+    .success.show{display:block}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>✨ Comparte tu Testimonio ✨</h1>
+      <p>Los atendimientos con Claudio Martinez</p>
+      </div>div>
+    <div id="msg" class="success">¡Gracias! Tu testimonio fue guardado.</div>div>
+    <form id="form">
+    <input type="text" id="nombre" placeholder="Tu Nombre" required>
+    <textarea id="mensaje" placeholder="Tu Testimonio" maxlength="1000" required style="min-height:120px"></textarea>
+    <input type="url" id="video" placeholder="URL Video (opcional)">
+    <button type="submit">Enviar</button>button>
+    </form>form>
+    </div>div>
+  <script>
+    const SUPABASE_URL='https://udtenqjlofjduuwffjja.supabase.co';
+    const ANON_KEY='sb_publisible_JpIAa1iXYAyOVMLBlpBp6w_D8BaSKer';
+    const form=document.getElementById('form');
+    const msg=document.getElementById('msg');
+    form.addEventListener('submit',async(e)=>{e.preventDefault();const nombre=document.getElementById('nombre').value;const mensaje=document.getElementById('mensaje').value;const video=document.getElementById('video').value||null;if(mensaje.length<10){alert('Min 10 caracteres');return}
+                                              const response=await fetch(SUPABASE_URL+'/rest/v1/testimonios',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON_KEY,'Authorization':'Bearer '+ANON_KEY},body:JSON.stringify({nombre,mensaje,'URL del video':video})});if(response.ok){form.reset();msg.classList.add('show');setTimeout(()=>msg.classList.remove('show'),5000)}else{alert('Error al guardar')}
+                                             });
+  </script>
+  </body>
+</html>html>
+  </script></p></h1>
+  </body>
+  </style></title>
+  </head>
