@@ -1,70 +1,385 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Testimonio - Claudio Martinez</title>
-    <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #f5f7f9 0%, #c3cfe2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-          .container { max-width: 700px; width: 100%; background: rgba(255,255,255,0.95); border-radius: 20px; padding: 50px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
-          .header { text-align: center; margin-bottom: 40px; }
-          h1 { background: linear-gradient(135deg, #f4a460 0%, #daa520 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 32px; margin-bottom: 10px; }
-          p { color: #666; font-size: 16px; }
-          input, textarea { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 10px; margin: 15px 0; font-family: inherit; font-size: 14px; }
-          input:focus, textarea:focus { outline: none; border-color: #daa520; }
-          button { width: 100%; padding: 16px; background: linear-gradient(135deg, #f4a460 0%, #daa520 100%); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 16px; transition: transform 0.2s; }
-          button:hover { transform: translateY(-2px); }
-          .success { display: none; background: #d4edda; color: #155724; padding: 16px; border-radius: 10px; margin-top: 10px; text-align: center; }
-          .success.show { display: block; }
-        </style>
-  </head>
-  <body>
-      <div class=\"container\">
-            <div class=\"header\">
-                    <h1>Comparte tu Testimonio</h1>
-                  <p>Los atendimientos con Claudio Martinez</p>
-            </div>div>
-          <div id=\"msg\" class=\"success\">Gracias! Tu testimonio fue guardado.</div>div>
-          <form id=\"form\">
-                <input type=\"text\" id=\"nombre\" placeholder=\"Tu Nombre\" required>
-                <textarea id=\"mensaje\" placeholder=\"Tu Testimonio\" maxlength=\"1000\" required style=\"min-height: 120px;\"></textarea>
-                <input type=\"url\" id=\"video\" placeholder=\"URL del video (opcional)\">
-                <button type=\"submit\">Enviar</button>button>
-          </form>form>
-      </div>div>
-    <script>
-          const SUPABASE_URL = 'https://udtenqjlofjduuwffjja.supabase.co';
-          const ANON_KEY = 'sb_public_JpIAa1iXYAyOVMLBlpBp6w_D8BaSKer';
-          const form = document.getElementById('form');
-          const msg = document.getElementById('msg');
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comparte tu Testimonio – Claudio Martínez</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-          form.addEventListener('submit', async (e) => {
-                  e.preventDefault();
-                  const nombre = document.getElementById('nombre').value;
-                  const mensaje = document.getElementById('mensaje').value;
-                  const video = document.getElementById('video').value || null;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background: #0d0a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
 
-                  if (mensaje.length < 10) { alert('Minimo 10 caracteres'); return; }
+    /* ── Flor de la Vida SVG fondo ── */
+    .bg-svg {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 110vmax;
+      height: 110vmax;
+      opacity: 0.06;
+      pointer-events: none;
+      z-index: 0;
+      animation: lentaRotacion 120s linear infinite;
+    }
+    @keyframes lentaRotacion {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
 
-                  const response = await fetch(SUPABASE_URL + '/rest/v1/testimonios', {
-                            method: 'POST',
-                            headers: {
-                                        'Content-Type': 'application/json',
-                                        'apikey': ANON_KEY,
-                                        'Authorization': 'Bearer ' + ANON_KEY
-                            },
-                            body: JSON.stringify({ nombre, mensaje, 'url_video': video })
-                  });
+    /* ── Resplandor central ── */
+    .glow {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(180, 120, 40, 0.18) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-                  if (response.ok) {
-                            form.reset();
-                            msg.classList.add('show');
-                            setTimeout(() => msg.classList.remove('show'), 5000);
-                  } else {
-                            alert('Error al guardar');
-                  }
-          });
-    </script>
-  </body>
-</html
+    /* ── Tarjeta principal ── */
+    .card {
+      position: relative;
+      z-index: 1;
+      max-width: 620px;
+      width: 100%;
+      background: rgba(20, 14, 40, 0.88);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 24px;
+      padding: 50px 44px 44px;
+      box-shadow:
+        0 0 60px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(212,175,55,0.12);
+      backdrop-filter: blur(12px);
+    }
+
+    /* ── Encabezado ── */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .logo-ring {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 18px;
+    }
+    .header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #f0c040 0%, #d4a017 50%, #e8b84b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: rgba(200, 180, 255, 0.65);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Campos ── */
+    .field {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: rgba(212, 175, 55, 0.7);
+      margin-bottom: 6px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 10px;
+      color: #f0e8d0;
+      font-family: inherit;
+      font-size: 14px;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      resize: vertical;
+    }
+    input::placeholder, textarea::placeholder {
+      color: rgba(180, 160, 220, 0.35);
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: rgba(212, 175, 55, 0.6);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+      background: rgba(255, 255, 255, 0.07);
+    }
+    textarea { min-height: 130px; }
+
+    .char-count {
+      text-align: right;
+      font-size: 11px;
+      color: rgba(200, 180, 255, 0.35);
+      margin-top: 4px;
+    }
+
+    /* ── Botón ── */
+    button[type="submit"] {
+      width: 100%;
+      margin-top: 8px;
+      padding: 15px;
+      background: linear-gradient(135deg, #c8900a 0%, #d4af37 50%, #b8860b 100%);
+      border: none;
+      border-radius: 12px;
+      color: #1a1000;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.25);
+    }
+    button[type="submit"]:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(212, 175, 55, 0.4);
+    }
+    button[type="submit"]:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Mensajes ── */
+    .msg {
+      display: none;
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin-top: 14px;
+      font-size: 14px;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .msg.success {
+      background: rgba(52, 168, 83, 0.15);
+      border: 1px solid rgba(52, 168, 83, 0.35);
+      color: #7defa7;
+    }
+    .msg.error {
+      background: rgba(234, 67, 53, 0.12);
+      border: 1px solid rgba(234, 67, 53, 0.3);
+      color: #ff9090;
+    }
+    .msg.show { display: block; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 11px;
+      color: rgba(180, 160, 220, 0.3);
+      letter-spacing: 0.5px;
+    }
+    .footer a {
+      color: rgba(212, 175, 55, 0.5);
+      text-decoration: none;
+    }
+    .footer a:hover { color: rgba(212, 175, 55, 0.8); }
+  </style>
+</head>
+<body>
+
+  <!-- Fondo Flor de la Vida -->
+  <svg class="bg-svg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke="#d4af37" stroke-width="0.8">
+      <!-- Círculo central -->
+      <circle cx="400" cy="400" r="66.7"/>
+      <!-- 6 pétalos internos -->
+      <circle cx="400" cy="333.3" r="66.7"/>
+      <circle cx="457.7" cy="366.7" r="66.7"/>
+      <circle cx="457.7" cy="433.3" r="66.7"/>
+      <circle cx="400" cy="466.7" r="66.7"/>
+      <circle cx="342.3" cy="433.3" r="66.7"/>
+      <circle cx="342.3" cy="366.7" r="66.7"/>
+      <!-- Anillo 2 -->
+      <circle cx="400" cy="266.6" r="66.7"/>
+      <circle cx="515.5" cy="333.3" r="66.7"/>
+      <circle cx="515.5" cy="466.7" r="66.7"/>
+      <circle cx="400" cy="533.4" r="66.7"/>
+      <circle cx="284.5" cy="466.7" r="66.7"/>
+      <circle cx="284.5" cy="333.3" r="66.7"/>
+      <!-- Anillo 3 diagonal -->
+      <circle cx="342.3" cy="300" r="66.7"/>
+      <circle cx="457.7" cy="300" r="66.7"/>
+      <circle cx="573.2" cy="400" r="66.7"/>
+      <circle cx="457.7" cy="500" r="66.7"/>
+      <circle cx="342.3" cy="500" r="66.7"/>
+      <circle cx="226.8" cy="400" r="66.7"/>
+      <!-- Anillo externo -->
+      <circle cx="400" cy="200" r="66.7"/>
+      <circle cx="515.5" cy="266.7" r="66.7"/>
+      <circle cx="573.2" cy="266.7" r="66.7"/>
+      <circle cx="630.9" cy="333.3" r="66.7"/>
+      <circle cx="630.9" cy="400" r="66.7"/>
+      <circle cx="630.9" cy="466.7" r="66.7"/>
+      <circle cx="573.2" cy="533.3" r="66.7"/>
+      <circle cx="515.5" cy="533.3" r="66.7"/>
+      <circle cx="400" cy="600" r="66.7"/>
+      <circle cx="284.5" cy="533.3" r="66.7"/>
+      <circle cx="226.8" cy="533.3" r="66.7"/>
+      <circle cx="169.1" cy="466.7" r="66.7"/>
+      <circle cx="169.1" cy="400" r="66.7"/>
+      <circle cx="169.1" cy="333.3" r="66.7"/>
+      <circle cx="226.8" cy="266.7" r="66.7"/>
+      <circle cx="284.5" cy="266.7" r="66.7"/>
+      <!-- Círculo contenedor grande -->
+      <circle cx="400" cy="400" r="266.7"/>
+      <circle cx="400" cy="400" r="200"/>
+      <circle cx="400" cy="400" r="333.4"/>
+    </g>
+  </svg>
+  <div class="glow"></div>
+
+  <div class="card">
+    <div class="header">
+      <!-- Ícono rosa/estrella como anillo dorado -->
+      <svg class="logo-ring" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#f0c040"/>
+            <stop offset="50%" style="stop-color:#d4a017"/>
+            <stop offset="100%" style="stop-color:#e8b84b"/>
+          </linearGradient>
+        </defs>
+        <circle cx="35" cy="35" r="32" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" opacity="0.5"/>
+        <circle cx="35" cy="35" r="22" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" opacity="0.7"/>
+        <!-- Pétalos simplificados -->
+        <circle cx="35" cy="20" r="15" fill="none" stroke="url(#goldGrad)" stroke-width="1"/>
+        <circle cx="48" cy="27.5" r="15" fill="none" stroke="url(#goldGrad)" stroke-width="1"/>
+        <circle cx="48" cy="42.5" r="15" fill="none" stroke="url(#goldGrad)" stroke-width="1"/>
+        <circle cx="35" cy="50" r="15" fill="none" stroke="url(#goldGrad)" stroke-width="1"/>
+        <circle cx="22" cy="42.5" r="15" fill="none" stroke="url(#goldGrad)" stroke-width="1"/>
+        <circle cx="22" cy="27.5" r="15" fill="none" stroke="url(#goldGrad)" stroke-width="1"/>
+        <circle cx="35" cy="35" r="4" fill="url(#goldGrad)" opacity="0.8"/>
+      </svg>
+      <h1>Comparte tu Testimonio</h1>
+      <p>¿Cómo fue tu experiencia en sesión con Claudio Martínez?<br>Tu historia inspira a otros a sanar.</p>
+    </div>
+
+    <form id="form" novalidate>
+      <div class="field">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" placeholder="Tu nombre completo" required maxlength="100">
+      </div>
+
+      <div class="field">
+        <label for="mensaje">Tu Testimonio</label>
+        <textarea id="mensaje" placeholder="Comparte tu experiencia de sanación, los cambios que percibiste o cómo te ayudó la sesión..." required maxlength="1000"></textarea>
+        <div class="char-count"><span id="charCount">0</span> / 1000</div>
+      </div>
+
+      <div class="field">
+        <label for="video">URL de Video (opcional)</label>
+        <input type="url" id="video" placeholder="https://youtube.com/...">
+      </div>
+
+      <button type="submit" id="submitBtn">✦ Enviar Testimonio</button>
+
+      <div id="successMsg" class="msg success">
+        ✦ ¡Gracias! Tu testimonio fue guardado con amor. 🙏
+      </div>
+      <div id="errorMsg" class="msg error">
+        ⚠ No se pudo guardar. Intenta nuevamente.
+      </div>
+    </form>
+
+    <div class="footer">
+      Claudio Martínez &nbsp;·&nbsp; Terapeuta Cuántico &copy; 2025
+    </div>
+  </div>
+
+  <script>
+    // ── Configuración Supabase ──────────────────────────────────
+    const SUPABASE_URL = 'https://udtenqjlofjduuwffjja.supabase.co';
+    // IMPORTANTE: Si el envío falla, reemplazá esta clave por el
+    // "anon public" JWT (empieza con "eyJ...") desde:
+    // Supabase Dashboard → Project Settings → API → Project API keys
+    const ANON_KEY = 'sb_publishable_JpIAa1iXYAyOVMLBlpBp6w_D8BaSKer';
+
+    // ── Contador de caracteres ──────────────────────────────────
+    const mensajeEl  = document.getElementById('mensaje');
+    const charCount  = document.getElementById('charCount');
+    mensajeEl.addEventListener('input', () => {
+      charCount.textContent = mensajeEl.value.length;
+    });
+
+    // ── Formulario ─────────────────────────────────────────────
+    const form       = document.getElementById('form');
+    const submitBtn  = document.getElementById('submitBtn');
+    const successMsg = document.getElementById('successMsg');
+    const errorMsg   = document.getElementById('errorMsg');
+
+    function showMsg(el, duration = 6000) {
+      successMsg.classList.remove('show');
+      errorMsg.classList.remove('show');
+      el.classList.add('show');
+      if (duration) setTimeout(() => el.classList.remove('show'), duration);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nombre  = document.getElementById('nombre').value.trim();
+      const mensaje = mensajeEl.value.trim();
+      const video   = document.getElementById('video').value.trim() || null;
+
+      if (!nombre)             { alert('Por favor ingresá tu nombre.'); return; }
+      if (mensaje.length < 10) { alert('El testimonio debe tener al menos 10 caracteres.'); return; }
+
+      submitBtn.disabled    = true;
+      submitBtn.textContent = 'Enviando...';
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/testimonios`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey':        ANON_KEY,
+            'Authorization': `Bearer ${ANON_KEY}`,
+            'Prefer':        'return=minimal'
+          },
+          body: JSON.stringify({ nombre, mensaje, video_url: video })
+        });
+
+        if (res.ok || res.status === 201) {
+          form.reset();
+          charCount.textContent = '0';
+          showMsg(successMsg);
+        } else {
+          const detail = await res.text();
+          console.error('Supabase error:', res.status, detail);
+          showMsg(errorMsg);
+        }
+      } catch (err) {
+        console.error('Network error:', err);
+        showMsg(errorMsg);
+      } finally {
+        submitBtn.disabled    = false;
+        submitBtn.textContent = '✦ Enviar Testimonio';
+      }
+    });
+  </script>
+</body>
+</html>
